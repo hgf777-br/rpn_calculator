@@ -10,6 +10,6 @@ Maybe in the future I will enhance it. Or maybe someone else will...
 
 ## Install and use
 
-1) If you only want to to use it in your windows, just download the [rpn setup](.\win_installer\rpn_setup.exe) file inside the [win_installer](.\win_installer) folder and double click it.
+1) If you only want to to use it in your windows, just download the [rpn setup](win_installer/rpn_setup.exe) file inside the [win_installer](win_installer) folder and double click it.
 2) if you want to run as a python project, and maybe work on it:
    1)
