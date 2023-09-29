@@ -8,8 +8,16 @@ In this first version I only put the regular functions I use and is pretty easy 
 
 Maybe in the future I will enhance it. Or maybe someone else will...
 
-## Install and use
+## Install and Use
 
 1) If you only want to to use it in your windows, just download the [rpn setup](win_installer/rpn_setup.exe) file inside the [win_installer](win_installer) folder and double click it.
+<br>
 2) if you want to run as a python project, and maybe work on it:
-   1)
+   1) First clone or download the code from this repository
+   2) Install Python 3.11 in your system. You can download the last version here [Python 3.11](https://www.python.org/ftp/python/3.11.5/python-3.11.5-amd64.exe)
+   3) Install pipenv globally in the system Python. you can do this by typing the code bellow in a Powershell(or CMD) terminal: <strong>pip install pipenv</strong>
+   4) With the same terminal go to the folder were you put the repository code and run the code bellow to create the virtual enviroment to run the code: <strong> pipenv install</strong>
+   5) After creating the virtual enviroment you enter it with the code: <strong>pipenv shell</strong>
+   6) And then you can run the calculator with: <strong>python rpn.py</strong>
+
+All the code is in the [rpn.py](rpn.py)</strong>. Only the interface is made outside it in the Qt Designer and the file is [ui/calculator.ui](ui/calculator.ui). If you want to edit it check how to do in the [Qt site](https://doc.qt.io/).
