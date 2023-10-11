@@ -1353,9 +1353,9 @@ color: rgb(250, 250, 250);</string>
      </property>
      <property name="font">
       <font>
-       <family>Digital-7 Mono</family>
+       <family>Digital-7 Italic</family>
        <pointsize>24</pointsize>
-       <italic>true</italic>
+       <italic>false</italic>
       </font>
      </property>
      <property name="layoutDirection">
@@ -1388,9 +1388,9 @@ color: rgb(250, 250, 250);</string>
      </property>
      <property name="font">
       <font>
-       <family>Digital-7 Mono</family>
+       <family>Digital-7 Italic</family>
        <pointsize>24</pointsize>
-       <italic>true</italic>
+       <italic>false</italic>
       </font>
      </property>
      <property name="layoutDirection">
@@ -1423,9 +1423,9 @@ color: rgb(250, 250, 250);</string>
      </property>
      <property name="font">
       <font>
-       <family>Digital-7 Mono</family>
+       <family>Digital-7 Italic</family>
        <pointsize>24</pointsize>
-       <italic>true</italic>
+       <italic>false</italic>
       </font>
      </property>
      <property name="layoutDirection">

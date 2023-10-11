@@ -39,11 +39,11 @@ class Stack:
     def push(self, value) -> None:
         self._items.append(value)
 
-    def pop(self) -> str | None:
+    def pop(self) -> str:
         if self._items:
             return self._items.pop()
         else:
-            return None
+            return ''
 
     def peek_x(self) -> str | None:
         if self._items:
@@ -146,6 +146,7 @@ class PyRpnEvaluate:
 
     def update_display(self):
         """Updates the display"""
+        print(self._stack)
 
         if self._stack.peek_x():
             self._view.x_display.setText(self._stack.peek_x())
@@ -242,73 +243,76 @@ class PyRpnEvaluate:
         return angle
 
     def btn_operation_one_arg(self, operation):
+        result = 0
+        x_value = ''
         if self._stack.peek_x():
             x_value = self._stack.pop()
             _error = False
             try:
                 match operation:
                     case '+/-':
-                        result = locale.atof(x_value) * -1.0  # type: ignore
+                        result = locale.atof(x_value) * -1.0
                     case '1/x':
                         if self._shift:
-                            result = math.factorial(locale.atoi(x_value))  # type: ignore
+                            result = math.factorial(locale.atoi(x_value))
                             self.btn_shift()
                         else:
-                            result = round(1 / locale.atof(x_value), 10)  # type: ignore
+                            result = 1 / locale.atof(x_value)
                     case 'sqrt':
                         if self._shift:
-                            result = round(locale.atof(x_value) ** 2.0, 10)  # type: ignore
+                            result = locale.atof(x_value) ** 2.0
                             self.btn_shift()
                         else:
-                            result = round(locale.atof(x_value) ** 0.5, 10)  # type: ignore
+                            result = locale.atof(x_value) ** 0.5
                     case 'sin':
                         if self._shift:
-                            result = math.asin(locale.atof(x_value))  # type: ignore
+                            result = math.asin(locale.atof(x_value))
                             result = self.convert_from_radian(result)
                             self.btn_shift()
                         else:
-                            angle = self.convert_to_radian(locale.atof(x_value))  # type: ignore
-                            result = round(math.sin(angle), 10)
+                            angle = self.convert_to_radian(locale.atof(x_value))
+                            result = math.sin(angle)
                     case 'cos':
                         if self._shift:
-                            result = math.acos(locale.atof(x_value))  # type: ignore
+                            result = math.acos(locale.atof(x_value))
                             result = self.convert_from_radian(result)
                             self.btn_shift()
                         else:
-                            angle = self.convert_to_radian(locale.atof(x_value))  # type: ignore
-                            result = round(math.cos(angle), 10)
+                            angle = self.convert_to_radian(locale.atof(x_value))
+                            result = math.cos(angle)
                     case 'tan':
                         if self._shift:
-                            result = math.atan(locale.atof(x_value))  # type: ignore
+                            result = math.atan(locale.atof(x_value))
                             result = self.convert_from_radian(result)
                             self.btn_shift()
                         else:
-                            angle = self.convert_to_radian(locale.atof(x_value))  # type: ignore
+                            angle = self.convert_to_radian(locale.atof(x_value))
                             if angle % (math.pi / 2) != 0:
-                                result = round(math.tan(angle), 10)
+                                result = math.tan(angle)
                             else:
                                 _error = True
                     case 'log':
                         if self._shift:
-                            result = 10 ** locale.atof(x_value)  # type: ignore
+                            result = 10 ** locale.atof(x_value)
                             self.btn_shift()
                         else:
-                            result = math.log10(locale.atof(x_value))  # type: ignore
+                            result = math.log10(locale.atof(x_value))
                     case 'ln':
                         if self._shift:
-                            result = math.e ** locale.atof(x_value)  # type: ignore
+                            result = math.e ** locale.atof(x_value)
                             self.btn_shift()
                         else:
-                            result = math.log(locale.atof(x_value))  # type: ignore
+                            result = math.log(locale.atof(x_value))
                     case _:
                         _error = True
             except Exception:
                 _error = True
             if not _error:
-                if len(str(result)) > 12:  # type: ignore
-                    result = locale.format_string('%.8e', result, grouping=True)  # type: ignore
+                result = round(result, 10)
+                if result > 999999999999.0:
+                    result = locale.format_string('%.8e', result, grouping=True)
                 else:
-                    result = locale.format_string('%.12g', result, grouping=True)  # type: ignore
+                    result = locale.format_string('%.12g', result, grouping=True)
                 self._stack.push(result)
                 self._new_x = True
                 self.update_display()
@@ -320,40 +324,47 @@ class PyRpnEvaluate:
 
     def btn_operation_two_arg(self, operation):
         _error = False
+        result = 0
+        x_value = ''
+        y_value = ''
         if not self._stack.peek_x():
             self.no_arg('x')
         elif self._stack.peek_y():
             x_value = self._stack.pop()
             y_value = self._stack.pop()
+            x_precision = len(x_value.split(',')[1]) if x_value.find(',') != -1 else 0
+            y_precision = len(y_value.split(',')[1]) if y_value.find(',') != -1 else 0
+            precision = max(x_precision, y_precision)
             try:
                 match operation:
                     case '+':
-                        result = locale.atof(y_value) + locale.atof(x_value)  # type: ignore
+                        result = locale.atof(y_value) + locale.atof(x_value)
                     case '-':
-                        result = locale.atof(y_value) - locale.atof(x_value)  # type: ignore
+                        result = locale.atof(y_value) - locale.atof(x_value)
                     case '*':
-                        result = locale.atof(y_value) * locale.atof(x_value)  # type: ignore
+                        result = locale.atof(y_value) * locale.atof(x_value)
                     case '/':
-                        result = round(locale.atof(y_value) / locale.atof(x_value), 12)  # type: ignore
+                        result = locale.atof(y_value) / locale.atof(x_value)
                     case '%':
-                        result = locale.atof(y_value) * (locale.atof(x_value) / 100)  # type: ignore
+                        result = locale.atof(y_value) * (locale.atof(x_value) / 100)
                     case 'y^x':
                         if self._shift:
-                            result = round(locale.atof(y_value) ** (1.0 / locale.atof(x_value)), 12)  # type: ignore
+                            result = locale.atof(y_value) ** (1.0 / locale.atof(x_value))
                             self.btn_shift()
                         else:
-                            result = locale.atof(y_value) ** locale.atof(x_value)  # type: ignore
+                            result = locale.atof(y_value) ** locale.atof(x_value)
                     case 'mod':
-                        result = locale.atof(y_value) % locale.atof(x_value)  # type: ignore
+                        result = locale.atof(y_value) % locale.atof(x_value)
                     case _:
                         _error = True
             except Exception:
                 _error = True
             if not _error:
-                if len(str(result)) > 12:  # type: ignore
-                    result = locale.format_string('%.8e', result, grouping=True)  # type: ignore
+                result = round(result, precision)
+                if result > 999999999999:
+                    result = locale.format_string('%.8e', result, grouping=True)
                 else:
-                    result = locale.format_string('%.12g', result, grouping=True)  # type: ignore
+                    result = locale.format_string('%.12g', result, grouping=True)
                 self._stack.push(result)
                 self.update_display()
             else:
