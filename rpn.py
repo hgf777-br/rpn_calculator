@@ -308,7 +308,6 @@ class PyRpnEvaluate:
             except Exception:
                 _error = True
             if not _error:
-                result = round(result, 10)
                 if result > 999999999999.0:
                     result = locale.format_string('%.8e', result, grouping=True)
                 else:
@@ -332,9 +331,6 @@ class PyRpnEvaluate:
         elif self._stack.peek_y():
             x_value = self._stack.pop()
             y_value = self._stack.pop()
-            x_precision = len(x_value.split(',')[1]) if x_value.find(',') != -1 else 0
-            y_precision = len(y_value.split(',')[1]) if y_value.find(',') != -1 else 0
-            precision = max(x_precision, y_precision)
             try:
                 match operation:
                     case '+':
@@ -360,7 +356,6 @@ class PyRpnEvaluate:
             except Exception:
                 _error = True
             if not _error:
-                result = round(result, precision)
                 if result > 999999999999:
                     result = locale.format_string('%.8e', result, grouping=True)
                 else:
