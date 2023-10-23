@@ -1,11 +1,7 @@
-# import PyQt6.QtWidgets as qtw
 import rpn
 
-import PyQt6.QtWidgets as qtw
 
-
-def test_two_args_integer_operations():
-    _ = qtw.QApplication([])
+def test_two_args_integer_operations(qtbot):
     pyrpn_window = rpn.PyRpnWindow()
     rpn_obj = rpn.PyRpnEvaluate(pyrpn_window)
 
@@ -54,8 +50,7 @@ def test_two_args_integer_operations():
     assert rpn_obj._stack.peek_x() == '3'
 
 
-def test_two_args_float_operations():
-    _ = qtw.QApplication([])
+def test_two_args_float_operations(qtbot):
     pyrpn_window = rpn.PyRpnWindow()
     rpn_obj = rpn.PyRpnEvaluate(pyrpn_window)
 

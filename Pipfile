@@ -10,6 +10,8 @@ pyinstaller = "*"
 [dev-packages]
 pytest = "*"
 flake8 = "*"
+pytest-cov = "*"
+pytest-qt = "*"
 
 [requires]
 python_version = "3.11"
