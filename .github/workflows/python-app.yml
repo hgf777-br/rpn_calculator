@@ -21,6 +21,9 @@ jobs:
     - name: Install Linux libraries
       run: |
         sudo apt-get install -y libegl1-mesa
+        export LC_ALL="pt_BR.UTF-8"
+        export LC_CTYPE="pt_BR.UTF-8"
+        sudo dpkg-reconfigure locales  
     - uses: actions/checkout@v3
     - name: Set up Python 3.11
       uses: actions/setup-python@v3
