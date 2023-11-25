@@ -1,4 +1,19 @@
+import pytest
 import rpn
+
+
+@pytest.fixture
+def RPN(qtbot):
+    pyrpn_window = rpn.PyRpnWindow()
+    pyrpn_window.show()
+
+    return rpn.PyRpn(pyrpn_window, rpn.PyRpnEvaluate(pyrpn_window))
+
+
+def test_new(RPN):
+    RPN._view.btn_one.click()
+
+    assert RPN._model._stack.peek_x() == '1'
 
 
 def test_two_args_integer_operations(qtbot):

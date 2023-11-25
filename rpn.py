@@ -134,8 +134,9 @@ class PyRpnEvaluate:
     """PyRPN's model class
 
     args:
-        view: View object - PyRpnWindow
+        view: View object -> PyRpnWindow
     """
+
     def __init__(self, view):
         self._view = view
         self._stack = Stack()
@@ -145,8 +146,7 @@ class PyRpnEvaluate:
         self._angle_mesurement = 'DEG'
 
     def update_display(self):
-        """Updates the display"""
-        print(self._stack)
+        """Draws stack and other information in the display area"""
 
         if self._stack.peek_x():
             self._view.x_display.setText(self._stack.peek_x())
@@ -164,10 +164,10 @@ class PyRpnEvaluate:
         self._view.stack_label.setText(f'STACK: {self._stack.size()}')
 
     def no_arg(self, arg):
-        """Shows '--' if no argument is given
+        """Shows '--' if the stack is empty for a given argument
 
         Args:
-            arg (str): which line from display to show '--', x or y
+            arg (str): x or y
         """
         if arg == 'x':
             self._view.x_display.setText('--')
@@ -175,7 +175,7 @@ class PyRpnEvaluate:
             self._view.y_display.setText('--')
 
     def key_pressed(self, key):
-        """Capture of aditional keys used in the calculator not directly associated with the buttons
+        """Capture aditional keys used in the calculator not directly associated with the buttons
 
         Args:
             key (Qt.Key): Key code pressed
@@ -189,6 +189,12 @@ class PyRpnEvaluate:
                 self.btn_shift()
 
     def btn_number(self, key):
+        """Function for all numbers and decimal point(comma) buttons
+            Insert a digit in the stack last entrie
+
+        Args:
+            key (str): one of these caracters -> '0123456789,'
+        """
         if self._new_x:
             self._stack.push('')
             self.update_display()
@@ -202,6 +208,11 @@ class PyRpnEvaluate:
             self._add_digit(key)
 
     def _add_digit(self, key):
+        """Function to enter a new digit to the number in the stack last entrie
+
+        Args:
+            key (str): one of these caracters -> '0123456789,'
+        """
         if not self._stack.peek_x() or self._after_enter:
             if self._after_enter:
                 self._stack.pop()
@@ -219,7 +230,7 @@ class PyRpnEvaluate:
                     x_value = x_value.replace('.', '') + key  # type: ignore
                     for i in range(len(x_value)):
                         if i != 0 and not i % 3:
-                            x_value = x_value[:-i-(i//3-1)] + '.' + x_value[-i-(i//3-1):]
+                            x_value = x_value[: -i - (i // 3 - 1)] + '.' + x_value[-i - (i // 3 - 1) :]
             elif key == ',' and ',' not in x_value:  # type: ignore
                 x_value += key
             self._stack.push(x_value)
@@ -227,22 +238,43 @@ class PyRpnEvaluate:
         self.update_display()
 
     def convert_to_radian(self, angle):
+        """Convert an angle from Degrees or Gradians to Radians
+
+        Args:
+            angle (float): angle in degree or gradian
+
+        Returns:
+            float: angle in radian
+        """
         if self._angle_mesurement == 'DEG':
             angle = math.radians(angle)
         elif self._angle_mesurement == 'GRAD':
-            angle = angle*360/400
+            angle = angle * 360 / 400
             angle = math.radians(angle)
         return angle
 
     def convert_from_radian(self, angle):
+        """Convert an angle from Radians to Degrees or Gradians
+
+        Args:
+            angle (float): angle in radian
+
+        Returns:
+            float: angle in degree or gradian
+        """
         if self._angle_mesurement == 'DEG':
             angle = math.degrees(angle)
         elif self._angle_mesurement == 'GRAD':
             angle = math.degrees(angle)
-            angle = angle*400/360
+            angle = angle * 400 / 360
         return angle
 
     def btn_operation_one_arg(self, operation):
+        """Function to connect all one argument buttons
+
+        Args:
+            operation (str): one arg button label -> +/-, 1/x, sqrt, sin, cos, tan, log, ln
+        """
         result = 0
         x_value = ''
         if self._stack.peek_x():
@@ -322,6 +354,11 @@ class PyRpnEvaluate:
             self.no_arg('x')
 
     def btn_operation_two_arg(self, operation):
+        """Function to connect all two argumnts buttons
+
+        Args:
+            operation (str): two args button label -> +, -, *, /, %, y^x, mod
+        """
         _error = False
         result = 0
         x_value = ''
@@ -370,6 +407,9 @@ class PyRpnEvaluate:
         self._new_x = True
 
     def btn_drop(self):
+        """Function to connect the DROP button
+        Remove the last entrie from the stack
+        """
         if self._shift:
             self._stack.cls()
             self.btn_shift()
@@ -379,6 +419,9 @@ class PyRpnEvaluate:
         self.update_display()
 
     def btn_swap(self):
+        """Function to connect the SWAP button
+        Invert the position of the two last entries in the stack
+        """
         if self._shift:
             stack_modal = StackModal(parent=self._view, stack=self._stack)
             stack_modal.exec()
@@ -389,15 +432,22 @@ class PyRpnEvaluate:
                 self.update_display()
             else:
                 self.no_arg('y')
+            self._new_x = True
 
     def btn_enter(self):
+        """Function to connect the ENTER buttton
+        Enter a number to the stack, duplicates it and waits for a new number
+        """
         self._stack.push(self._stack.peek_x())
         self.update_display()
         self._after_enter = True
 
     def btn_back(self):
+        """Function to connect the BACKSPACE button
+        Remove the last caracter from the last entrie in the stack
+        """
         if self._stack.peek_x():
-            x_value = self._stack.pop()[:-1]  # type: ignore
+            x_value = self._stack.pop()[:-1]
             if x_value:
                 if x_value.endswith(('.', ',')):
                     x_value = x_value[:-1]
@@ -407,6 +457,9 @@ class PyRpnEvaluate:
             self.update_display()
 
     def btn_shift(self):
+        """Function to connect the SHIFT button
+        Toggle (on/off) the shift button
+        """
         self._shift = False if self._shift else True
         if self._shift:
             self._view.shift_label.setText('SHIFT')
@@ -414,18 +467,27 @@ class PyRpnEvaluate:
             self._view.shift_label.setText('')
 
     def btn_pi(self):
+        """Function to connect the PI button
+        Insert the pi number in the stack
+        """
         number = round(math.pi, 12)
         self._stack.push(locale.format_string('%.12g', number, grouping=True))
         self._new_x = True
         self.update_display()
 
     def btn_e(self):
+        """Function to connect the E button
+        Insert the e number in the stack
+        """
         number = round(math.e, 12)
         self._stack.push(locale.format_string('%.12g', number, grouping=True))
         self._new_x = True
         self.update_display()
 
     def btn_drg(self):
+        """Function to connect the DRG button
+        Change or convert degrees units (DEG/GRAD/RAD)
+        """
         if self._shift:
             x_value = self._stack.pop()
         else:
@@ -440,28 +502,37 @@ class PyRpnEvaluate:
                 self._angle_mesurement = 'GRAD'
                 if x_value:
                     self.btn_shift()
-                    self._stack.push(locale.format_string('%.12g', math.degrees(locale.atof(x_value)*400/360), grouping=True))
+                    self._stack.push(locale.format_string('%.12g', math.degrees(locale.atof(x_value) * 400 / 360), grouping=True))
             case _:
                 self._angle_mesurement = 'DEG'
                 if x_value:
                     self.btn_shift()
-                    self._stack.push(locale.format_string('%.12g', locale.atof(x_value)*360/400, grouping=True))
+                    self._stack.push(locale.format_string('%.12g', locale.atof(x_value) * 360 / 400, grouping=True))
         self.update_display()
 
     def error(self):
+        """Show 'ERROR' in the display"""
         self._view.x_display.setText('ERROR')
 
 
 class PyRpn:
-    """PyRPN's controller class"""
+    """PyRPN's controller class
+
+    description:
+        connects all QT signals send from the view to functions in the model
+    """
+
     def __init__(self, view, model):
         self._view = view
         self._model = model
         self._connectSignalsAndSlots()
 
     def _connectSignalsAndSlots(self):
-        # Outras teclas pressionadas
-        self._view.key_signal.connect(self._model.key_pressed)  # usando sinal definido pelo programador
+        """Connect all buttons with QT signals
+        """
+        # Keyboard keys not directly shown in the calculator
+        self._view.key_signal.connect(self._model.key_pressed)  # using personalized signal key_signal
+
         # Numbers buttons
         self._view.btn_zero.clicked.connect(partial(self._model.btn_number, '0'))
         self._view.btn_one.clicked.connect(partial(self._model.btn_number, '1'))
@@ -474,6 +545,7 @@ class PyRpn:
         self._view.btn_eight.clicked.connect(partial(self._model.btn_number, '8'))
         self._view.btn_nine.clicked.connect(partial(self._model.btn_number, '9'))
         self._view.btn_decimal.clicked.connect(partial(self._model.btn_number, ','))
+
         # Control buttons
         self._view.btn_drop.clicked.connect(self._model.btn_drop)
         self._view.btn_swap.clicked.connect(self._model.btn_swap)
@@ -483,6 +555,7 @@ class PyRpn:
         self._view.btn_pi.clicked.connect(self._model.btn_pi)
         self._view.btn_e.clicked.connect(self._model.btn_e)
         self._view.btn_drg.clicked.connect(self._model.btn_drg)
+
         # Two args operation buttons
         self._view.btn_add.clicked.connect(partial(self._model.btn_operation_two_arg, '+'))
         self._view.btn_minus.clicked.connect(partial(self._model.btn_operation_two_arg, '-'))
@@ -491,6 +564,7 @@ class PyRpn:
         self._view.btn_percent.clicked.connect(partial(self._model.btn_operation_two_arg, '%'))
         self._view.btn_y_exp_x.clicked.connect(partial(self._model.btn_operation_two_arg, 'y^x'))
         self._view.btn_mod.clicked.connect(partial(self._model.btn_operation_two_arg, 'mod'))
+
         # One arg operation buttons
         self._view.btn_change_sign.clicked.connect(partial(self._model.btn_operation_one_arg, '+/-'))
         self._view.btn_x_inv.clicked.connect(partial(self._model.btn_operation_one_arg, '1/x'))
@@ -503,7 +577,7 @@ class PyRpn:
 
 
 def main():
-    """PyRPN's main function."""
+    """PyRPN's main function"""
     pyrpn_app = qtw.QApplication([])
     pyrpn_window = PyRpnWindow()
     pyrpn_window.show()
