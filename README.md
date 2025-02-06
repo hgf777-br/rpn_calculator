@@ -1,8 +1,8 @@
 # RPN Calculator
 
-I developed this RPN calculator to use in windows because I love RPN's and can't find one beatifull and easy to use as the one I have in my android. I use RealCalc in the Android, for a long time, and used it as a base to mine. So all my thanks to the RealCalc guys. Your calculator Rocks!!!
+I developed this RPN calculator to use in windows because I love RPN's and can't find one beatifull and easy to use as the one I have in my android. I use [RealCalc](https://play.google.com/store/apps/details?id=uk.co.nickfines.RealCalc&hl=pt_BR&pli=1) in the Android, for a long time, and used it as a base to mine. So all my thanks to the RealCalc guys. Your calculator Rocks!!!
 
-I used Python and PyQt6 for developing it and transformed it in a windows desktop program with pyinstaller.
+I used Python and PyQt6 for developing it and transformed it in a windows desktop program with [pyinstaller](https://pyinstaller.org/en/stable/).
 
 In this first version I only put the regular functions I use and is pretty easy to use.
 

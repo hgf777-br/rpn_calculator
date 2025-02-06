@@ -63,7 +63,7 @@ class Stack:
         else:
             return None
 
-    def is_empty(self) -> bool:
+    def isEmpty(self) -> bool:
         return not self._items
 
     def size(self) -> int:
@@ -103,7 +103,7 @@ class StackModal(qtw.QDialog):
 
         self.scroll_layout = qtw.QVBoxLayout(self.scroll_content)  # type: ignore
 
-        if stack.is_eempty():
+        if stack.isEmpty():
             self.scroll_layout.addWidget(qtw.QLabel('Empty'))
         else:
             if stack.size() > 10:
@@ -140,18 +140,18 @@ class PyRpnEvaluate:
     def __init__(self, view):
         self._view = view
         self._stack = Stack()
-        self._stack.push('0')
         self._after_enter = True
         self._new_x = False
         self._shift = False
         self._angle_mesurement = 'DEG'
-        self.update_display()
 
     def update_display(self):
         """Draws stack and other information in the display area"""
 
-        print('update ->', self._stack)
-        self._view.x_display.setText(self._stack.peek_x())
+        if self._stack.peek_x():
+            self._view.x_display.setText(self._stack.peek_x())
+        else:
+            self._view.x_display.setText('')
         if self._stack.peek_y():
             self._view.y_display.setText(self._stack.peek_y())
         else:
@@ -233,7 +233,6 @@ class PyRpnEvaluate:
                             x_value = x_value[: -i - (i // 3 - 1)] + '.' + x_value[-i - (i // 3 - 1):]
             elif key == ',' and ',' not in x_value:  # type: ignore
                 x_value += key
-            x_value = self.format_number(x_value)
             self._stack.push(x_value)
 
         self.update_display()
@@ -416,9 +415,7 @@ class PyRpnEvaluate:
             self.btn_shift()
         else:
             self._stack.pop()
-        if self._stack.is_empty():
-            self._stack.push('0')
-        self._new_x = False
+        self._new_x = True
         self.update_display()
 
     def btn_swap(self):
@@ -451,12 +448,11 @@ class PyRpnEvaluate:
         """
         if self._stack.peek_x():
             x_value = self._stack.pop()[:-1]
-            if x_value == '':
-                self._stack.push('0')
-            elif x_value:
+            if x_value:
                 if x_value.endswith(('.', ',')):
                     x_value = x_value[:-1]
-                x_value = self.format_number(x_value)
+                x_value = locale.atof(x_value)
+                x_value = locale.format_string('%.12g', x_value, grouping=True)
                 self._stack.push(x_value)
             self.update_display()
 
@@ -517,12 +513,6 @@ class PyRpnEvaluate:
     def error(self):
         """Show 'ERROR' in the display"""
         self._view.x_display.setText('ERROR')
-        
-    def format_number(self, number):
-        number = locale.atof(number)
-        number = locale.format_string('%.12g', number, grouping=True)
-        
-        return number
 
 
 class PyRpn:
