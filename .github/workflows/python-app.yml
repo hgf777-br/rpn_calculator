@@ -20,7 +20,7 @@ jobs:
     steps:
     - name: Install Linux libraries
       run: |
-        sudo apt-get install -y libegl1-mesa
+        sudo apt-get install -y libegl1
         export LC_ALL="pt_BR.UTF-8"
         export LC_CTYPE="pt_BR.UTF-8"
         sudo dpkg-reconfigure locales  
