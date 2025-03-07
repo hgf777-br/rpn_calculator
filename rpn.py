@@ -231,9 +231,9 @@ class PyRpnEvaluate:
                     for i in range(len(x_value)):
                         if i != 0 and not i % 3:
                             x_value = x_value[: -i - (i // 3 - 1)] + '.' + x_value[-i - (i // 3 - 1):]
+                x_value = self.format_number(x_value)
             elif key == ',' and ',' not in x_value:  # type: ignore
                 x_value += key
-            x_value = self.format_number(x_value)
             self._stack.push(x_value)
 
         self.update_display()
@@ -520,7 +520,9 @@ class PyRpnEvaluate:
         
     def format_number(self, number):
         number = locale.atof(number)
+        print(f'Before: {number}')
         number = locale.format_string('%.12g', number, grouping=True)
+        print(f'After: {number}')
         
         return number
 
