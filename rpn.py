@@ -20,7 +20,7 @@ import PyQt6.QtGui as qtg
 import PyQt6.QtWidgets as qtw
 from PyQt6 import uic
 
-locale.setlocale(locale.LC_ALL, ('pt-BR', ''))
+locale.setlocale(locale.LC_ALL, ("pt-BR", ""))
 basedir = os.path.dirname(__file__)
 
 
@@ -43,7 +43,7 @@ class Stack:
         if self._items:
             return self._items.pop()
         else:
-            return ''
+            return ""
 
     def peek_x(self) -> str | None:
         if self._items:
@@ -87,14 +87,16 @@ class StackModal(qtw.QDialog):
     def __init__(self, parent, stack):
         super().__init__(parent)
         self.setWindowTitle("STACK")
-        self.setWindowIcon(qtg.QIcon(os.path.join(basedir, './icons/stack.svg')))
+        self.setWindowIcon(qtg.QIcon(os.path.join(basedir, "./icons/stack.svg")))
         self.setModal(True)
         self.setFixedWidth(150)
-        self.setStyleSheet('color: white')
+        self.setStyleSheet("color: white")
 
         self.scroll = qtw.QScrollArea(self)  # type: ignore
         self.scroll.setWidgetResizable(True)
-        self.scroll.setHorizontalScrollBarPolicy(qtc.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.scroll.setHorizontalScrollBarPolicy(
+            qtc.Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+        )
         self.scroll_content = qtw.QWidget(self.scroll)
         self.scroll.setWidget(self.scroll_content)
 
@@ -104,12 +106,14 @@ class StackModal(qtw.QDialog):
         self.scroll_layout = qtw.QVBoxLayout(self.scroll_content)  # type: ignore
 
         if stack.is_eempty():
-            self.scroll_layout.addWidget(qtw.QLabel('Empty'))
+            self.scroll_layout.addWidget(qtw.QLabel("Empty"))
         else:
             if stack.size() > 10:
                 self.setFixedHeight(250)
             for idx, number in enumerate(stack.items(), 1):
-                self.scroll_layout.addWidget(qtw.QLabel(f'<font color="#8AF">{idx}:</font> {number}'))
+                self.scroll_layout.addWidget(
+                    qtw.QLabel(f'<font color="#8AF">{idx}:</font> {number}')
+                )
 
 
 class PyRpnWindow(qtw.QMainWindow):
@@ -121,8 +125,8 @@ class PyRpnWindow(qtw.QMainWindow):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        uic.loadUi(os.path.join(basedir, './ui/calculator.ui'), self)  # type: ignore
-        self.setWindowIcon(qtg.QIcon(os.path.join(basedir, './icons/calc.svg')))
+        uic.loadUi(os.path.join(basedir, "./ui/calculator.ui"), self)  # type: ignore
+        self.setWindowIcon(qtg.QIcon(os.path.join(basedir, "./icons/calc.svg")))
 
     key_signal = qtc.pyqtSignal(int)
 
@@ -140,28 +144,28 @@ class PyRpnEvaluate:
     def __init__(self, view):
         self._view = view
         self._stack = Stack()
-        self._stack.push('0')
+        self._stack.push("0")
         self._after_enter = True
         self._new_x = False
         self._shift = False
-        self._angle_mesurement = 'DEG'
+        self._angle_mesurement = "DEG"
         self.update_display()
 
     def update_display(self):
         """Draws stack and other information in the display area"""
 
-        print('update ->', self._stack)
+        print("update ->", self._stack)
         self._view.x_display.setText(self._stack.peek_x())
         if self._stack.peek_y():
             self._view.y_display.setText(self._stack.peek_y())
         else:
-            self._view.y_display.setText('')
+            self._view.y_display.setText("")
         if self._stack.peek_z():
             self._view.z_display.setText(self._stack.peek_z())
         else:
-            self._view.z_display.setText('')
+            self._view.z_display.setText("")
         self._view.angle_label.setText(self._angle_mesurement)
-        self._view.stack_label.setText(f'STACK: {self._stack.size()}')
+        self._view.stack_label.setText(f"STACK: {self._stack.size()}")
 
     def no_arg(self, arg):
         """Shows '--' if the stack is empty for a given argument
@@ -169,10 +173,10 @@ class PyRpnEvaluate:
         Args:
             arg (str): x or y
         """
-        if arg == 'x':
-            self._view.x_display.setText('--')
+        if arg == "x":
+            self._view.x_display.setText("--")
         else:
-            self._view.y_display.setText('--')
+            self._view.y_display.setText("--")
 
     def key_pressed(self, key):
         """Capture aditional keys used in the calculator not directly associated with the buttons
@@ -182,7 +186,7 @@ class PyRpnEvaluate:
         """
         match key:
             case qtc.Qt.Key.Key_Period:
-                self.btn_number(',')
+                self.btn_number(",")
             case qtc.Qt.Key.Key_Return:
                 self.btn_enter()
             case qtc.Qt.Key.Key_Shift:
@@ -196,15 +200,15 @@ class PyRpnEvaluate:
             key (str): one of these caracters -> '0123456789,'
         """
         if self._new_x:
-            self._stack.push('')
+            self._stack.push("")
             self.update_display()
             self._new_x = False
             self._after_enter = True
         x_value = self._stack.peek_x()
         if not x_value or self._after_enter:
-            if key in '0123456789,':
+            if key in "0123456789,":
                 self._add_digit(key)
-        elif len(x_value.replace('.', '').replace(',', '')) < 12:
+        elif len(x_value.replace(".", "").replace(",", "")) < 12:
             self._add_digit(key)
 
     def _add_digit(self, key):
@@ -217,22 +221,26 @@ class PyRpnEvaluate:
             if self._after_enter:
                 self._stack.pop()
                 self._after_enter = False
-            if key == ',':
-                self._stack.push('0,')
+            if key == ",":
+                self._stack.push("0,")
             else:
                 self._stack.push(key)
         else:
             x_value = self._stack.pop()
-            if key in '0123456789':
-                if ',' in x_value:  # type: ignore
+            if key in "0123456789":
+                if "," in x_value:  # type: ignore
                     x_value += key
                 else:
-                    x_value = x_value.replace('.', '') + key  # type: ignore
+                    x_value = x_value.replace(".", "") + key  # type: ignore
                     for i in range(len(x_value)):
                         if i != 0 and not i % 3:
-                            x_value = x_value[: -i - (i // 3 - 1)] + '.' + x_value[-i - (i // 3 - 1):]
+                            x_value = (
+                                x_value[: -i - (i // 3 - 1)]
+                                + "."
+                                + x_value[-i - (i // 3 - 1):]
+                            )
                 x_value = self.format_number(x_value)
-            elif key == ',' and ',' not in x_value:  # type: ignore
+            elif key == "," and "," not in x_value:  # type: ignore
                 x_value += key
             self._stack.push(x_value)
 
@@ -247,9 +255,9 @@ class PyRpnEvaluate:
         Returns:
             float: angle in radian
         """
-        if self._angle_mesurement == 'DEG':
+        if self._angle_mesurement == "DEG":
             angle = math.radians(angle)
-        elif self._angle_mesurement == 'GRAD':
+        elif self._angle_mesurement == "GRAD":
             angle = angle * 360 / 400
             angle = math.radians(angle)
         return angle
@@ -263,9 +271,9 @@ class PyRpnEvaluate:
         Returns:
             float: angle in degree or gradian
         """
-        if self._angle_mesurement == 'DEG':
+        if self._angle_mesurement == "DEG":
             angle = math.degrees(angle)
-        elif self._angle_mesurement == 'GRAD':
+        elif self._angle_mesurement == "GRAD":
             angle = math.degrees(angle)
             angle = angle * 400 / 360
         return angle
@@ -277,27 +285,27 @@ class PyRpnEvaluate:
             operation (str): one arg button label -> +/-, 1/x, sqrt, sin, cos, tan, log, ln
         """
         result = 0
-        x_value = ''
+        x_value = ""
         if self._stack.peek_x():
             x_value = self._stack.pop()
             _error = False
             try:
                 match operation:
-                    case '+/-':
+                    case "+/-":
                         result = locale.atof(x_value) * -1.0
-                    case '1/x':
+                    case "1/x":
                         if self._shift:
                             result = math.factorial(locale.atoi(x_value))
                             self.btn_shift()
                         else:
                             result = 1 / locale.atof(x_value)
-                    case 'sqrt':
+                    case "sqrt":
                         if self._shift:
                             result = locale.atof(x_value) ** 2.0
                             self.btn_shift()
                         else:
                             result = locale.atof(x_value) ** 0.5
-                    case 'sin':
+                    case "sin":
                         if self._shift:
                             result = math.asin(locale.atof(x_value))
                             result = self.convert_from_radian(result)
@@ -305,7 +313,7 @@ class PyRpnEvaluate:
                         else:
                             angle = self.convert_to_radian(locale.atof(x_value))
                             result = math.sin(angle)
-                    case 'cos':
+                    case "cos":
                         if self._shift:
                             result = math.acos(locale.atof(x_value))
                             result = self.convert_from_radian(result)
@@ -313,7 +321,7 @@ class PyRpnEvaluate:
                         else:
                             angle = self.convert_to_radian(locale.atof(x_value))
                             result = math.cos(angle)
-                    case 'tan':
+                    case "tan":
                         if self._shift:
                             result = math.atan(locale.atof(x_value))
                             result = self.convert_from_radian(result)
@@ -324,13 +332,13 @@ class PyRpnEvaluate:
                                 result = math.tan(angle)
                             else:
                                 _error = True
-                    case 'log':
+                    case "log":
                         if self._shift:
                             result = 10 ** locale.atof(x_value)
                             self.btn_shift()
                         else:
                             result = math.log10(locale.atof(x_value))
-                    case 'ln':
+                    case "ln":
                         if self._shift:
                             result = math.e ** locale.atof(x_value)
                             self.btn_shift()
@@ -342,9 +350,9 @@ class PyRpnEvaluate:
                 _error = True
             if not _error:
                 if result > 999999999999.0:
-                    result = locale.format_string('%.8e', result, grouping=True)
+                    result = locale.format_string("%.8e", result, grouping=True)
                 else:
-                    result = locale.format_string('%.12g', result, grouping=True)
+                    result = locale.format_string("%.12g", result, grouping=True)
                 self._stack.push(result)
                 self._new_x = True
                 self.update_display()
@@ -352,7 +360,7 @@ class PyRpnEvaluate:
                 self._new_x = True
                 self.error()
         else:
-            self.no_arg('x')
+            self.no_arg("x")
 
     def btn_operation_two_arg(self, operation):
         """Function to connect all two argumnts buttons
@@ -362,32 +370,34 @@ class PyRpnEvaluate:
         """
         _error = False
         result = 0
-        x_value = ''
-        y_value = ''
+        x_value = ""
+        y_value = ""
         if not self._stack.peek_x():
-            self.no_arg('x')
+            self.no_arg("x")
         elif self._stack.peek_y():
             x_value = self._stack.pop()
             y_value = self._stack.pop()
             try:
                 match operation:
-                    case '+':
+                    case "+":
                         result = locale.atof(y_value) + locale.atof(x_value)
-                    case '-':
+                    case "-":
                         result = locale.atof(y_value) - locale.atof(x_value)
-                    case '*':
+                    case "*":
                         result = locale.atof(y_value) * locale.atof(x_value)
-                    case '/':
+                    case "/":
                         result = locale.atof(y_value) / locale.atof(x_value)
-                    case '%':
+                    case "%":
                         result = locale.atof(y_value) * (locale.atof(x_value) / 100)
-                    case 'y^x':
+                    case "y^x":
                         if self._shift:
-                            result = locale.atof(y_value) ** (1.0 / locale.atof(x_value))
+                            result = locale.atof(y_value) ** (
+                                1.0 / locale.atof(x_value)
+                            )
                             self.btn_shift()
                         else:
                             result = locale.atof(y_value) ** locale.atof(x_value)
-                    case 'mod':
+                    case "mod":
                         result = locale.atof(y_value) % locale.atof(x_value)
                     case _:
                         _error = True
@@ -395,16 +405,16 @@ class PyRpnEvaluate:
                 _error = True
             if not _error:
                 if result > 999999999999:
-                    result = locale.format_string('%.8e', result, grouping=True)
+                    result = locale.format_string("%.8e", result, grouping=True)
                 else:
-                    result = locale.format_string('%.12g', result, grouping=True)
+                    result = locale.format_string("%.12g", result, grouping=True)
                 self._stack.push(result)
                 self.update_display()
             else:
-                self._view.y_display.setText('')
+                self._view.y_display.setText("")
                 self.error()
         else:
-            self.no_arg('y')
+            self.no_arg("y")
         self._new_x = True
 
     def btn_drop(self):
@@ -417,7 +427,7 @@ class PyRpnEvaluate:
         else:
             self._stack.pop()
         if self._stack.is_empty():
-            self._stack.push('0')
+            self._stack.push("0")
         self._new_x = False
         self.update_display()
 
@@ -434,7 +444,7 @@ class PyRpnEvaluate:
                 self._stack.swap()
                 self.update_display()
             else:
-                self.no_arg('y')
+                self.no_arg("y")
             self._new_x = True
 
     def btn_enter(self):
@@ -451,10 +461,10 @@ class PyRpnEvaluate:
         """
         if self._stack.peek_x():
             x_value = self._stack.pop()[:-1]
-            if x_value == '':
-                self._stack.push('0')
+            if x_value == "":
+                self._stack.push("0")
             elif x_value:
-                if x_value.endswith(('.', ',')):
+                if x_value.endswith((".", ",")):
                     x_value = x_value[:-1]
                 x_value = self.format_number(x_value)
                 self._stack.push(x_value)
@@ -466,16 +476,16 @@ class PyRpnEvaluate:
         """
         self._shift = False if self._shift else True
         if self._shift:
-            self._view.shift_label.setText('SHIFT')
+            self._view.shift_label.setText("SHIFT")
         else:
-            self._view.shift_label.setText('')
+            self._view.shift_label.setText("")
 
     def btn_pi(self):
         """Function to connect the PI button
         Insert the pi number in the stack
         """
         number = round(math.pi, 12)
-        self._stack.push(locale.format_string('%.12g', number, grouping=True))
+        self._stack.push(locale.format_string("%.12g", number, grouping=True))
         self._new_x = True
         self.update_display()
 
@@ -484,7 +494,7 @@ class PyRpnEvaluate:
         Insert the e number in the stack
         """
         number = round(math.e, 12)
-        self._stack.push(locale.format_string('%.12g', number, grouping=True))
+        self._stack.push(locale.format_string("%.12g", number, grouping=True))
         self._new_x = True
         self.update_display()
 
@@ -497,33 +507,47 @@ class PyRpnEvaluate:
         else:
             x_value = None
         match self._angle_mesurement:
-            case 'DEG':
-                self._angle_mesurement = 'RAD'
+            case "DEG":
+                self._angle_mesurement = "RAD"
                 if x_value:
                     self.btn_shift()
-                    self._stack.push(locale.format_string('%.12g', math.radians(locale.atof(x_value)), grouping=True))
-            case 'RAD':
-                self._angle_mesurement = 'GRAD'
+                    self._stack.push(
+                        locale.format_string(
+                            "%.12g", math.radians(locale.atof(x_value)), grouping=True
+                        )
+                    )
+            case "RAD":
+                self._angle_mesurement = "GRAD"
                 if x_value:
                     self.btn_shift()
-                    self._stack.push(locale.format_string('%.12g', math.degrees(locale.atof(x_value) * 400 / 360), grouping=True))
+                    self._stack.push(
+                        locale.format_string(
+                            "%.12g",
+                            math.degrees(locale.atof(x_value) * 400 / 360),
+                            grouping=True,
+                        )
+                    )
             case _:
-                self._angle_mesurement = 'DEG'
+                self._angle_mesurement = "DEG"
                 if x_value:
                     self.btn_shift()
-                    self._stack.push(locale.format_string('%.12g', locale.atof(x_value) * 360 / 400, grouping=True))
+                    self._stack.push(
+                        locale.format_string(
+                            "%.12g", locale.atof(x_value) * 360 / 400, grouping=True
+                        )
+                    )
         self.update_display()
 
     def error(self):
         """Show 'ERROR' in the display"""
-        self._view.x_display.setText('ERROR')
-        
+        self._view.x_display.setText("ERROR")
+
     def format_number(self, number):
         number = locale.atof(number)
-        print(f'Before: {number}')
-        number = locale.format_string('%.12g', number, grouping=True)
-        print(f'After: {number}')
-        
+        print(f"Before: {number}")
+        number = locale.format_string("%.12g", number, grouping=True)
+        print(f"After: {number}")
+
         return number
 
 
@@ -540,23 +564,24 @@ class PyRpn:
         self._connectSignalsAndSlots()
 
     def _connectSignalsAndSlots(self):
-        """Connect all buttons with QT signals
-        """
+        """Connect all buttons with QT signals"""
         # Keyboard keys not directly shown in the calculator
-        self._view.key_signal.connect(self._model.key_pressed)  # using personalized signal key_signal
+        self._view.key_signal.connect(
+            self._model.key_pressed
+        )  # using personalized signal key_signal
 
         # Numbers buttons
-        self._view.btn_zero.clicked.connect(partial(self._model.btn_number, '0'))
-        self._view.btn_one.clicked.connect(partial(self._model.btn_number, '1'))
-        self._view.btn_two.clicked.connect(partial(self._model.btn_number, '2'))
-        self._view.btn_three.clicked.connect(partial(self._model.btn_number, '3'))
-        self._view.btn_four.clicked.connect(partial(self._model.btn_number, '4'))
-        self._view.btn_five.clicked.connect(partial(self._model.btn_number, '5'))
-        self._view.btn_six.clicked.connect(partial(self._model.btn_number, '6'))
-        self._view.btn_seven.clicked.connect(partial(self._model.btn_number, '7'))
-        self._view.btn_eight.clicked.connect(partial(self._model.btn_number, '8'))
-        self._view.btn_nine.clicked.connect(partial(self._model.btn_number, '9'))
-        self._view.btn_decimal.clicked.connect(partial(self._model.btn_number, ','))
+        self._view.btn_zero.clicked.connect(partial(self._model.btn_number, "0"))
+        self._view.btn_one.clicked.connect(partial(self._model.btn_number, "1"))
+        self._view.btn_two.clicked.connect(partial(self._model.btn_number, "2"))
+        self._view.btn_three.clicked.connect(partial(self._model.btn_number, "3"))
+        self._view.btn_four.clicked.connect(partial(self._model.btn_number, "4"))
+        self._view.btn_five.clicked.connect(partial(self._model.btn_number, "5"))
+        self._view.btn_six.clicked.connect(partial(self._model.btn_number, "6"))
+        self._view.btn_seven.clicked.connect(partial(self._model.btn_number, "7"))
+        self._view.btn_eight.clicked.connect(partial(self._model.btn_number, "8"))
+        self._view.btn_nine.clicked.connect(partial(self._model.btn_number, "9"))
+        self._view.btn_decimal.clicked.connect(partial(self._model.btn_number, ","))
 
         # Control buttons
         self._view.btn_drop.clicked.connect(self._model.btn_drop)
@@ -569,23 +594,53 @@ class PyRpn:
         self._view.btn_drg.clicked.connect(self._model.btn_drg)
 
         # Two args operation buttons
-        self._view.btn_add.clicked.connect(partial(self._model.btn_operation_two_arg, '+'))
-        self._view.btn_minus.clicked.connect(partial(self._model.btn_operation_two_arg, '-'))
-        self._view.btn_multiply.clicked.connect(partial(self._model.btn_operation_two_arg, '*'))
-        self._view.btn_divide.clicked.connect(partial(self._model.btn_operation_two_arg, '/'))
-        self._view.btn_percent.clicked.connect(partial(self._model.btn_operation_two_arg, '%'))
-        self._view.btn_y_exp_x.clicked.connect(partial(self._model.btn_operation_two_arg, 'y^x'))
-        self._view.btn_mod.clicked.connect(partial(self._model.btn_operation_two_arg, 'mod'))
+        self._view.btn_add.clicked.connect(
+            partial(self._model.btn_operation_two_arg, "+")
+        )
+        self._view.btn_minus.clicked.connect(
+            partial(self._model.btn_operation_two_arg, "-")
+        )
+        self._view.btn_multiply.clicked.connect(
+            partial(self._model.btn_operation_two_arg, "*")
+        )
+        self._view.btn_divide.clicked.connect(
+            partial(self._model.btn_operation_two_arg, "/")
+        )
+        self._view.btn_percent.clicked.connect(
+            partial(self._model.btn_operation_two_arg, "%")
+        )
+        self._view.btn_y_exp_x.clicked.connect(
+            partial(self._model.btn_operation_two_arg, "y^x")
+        )
+        self._view.btn_mod.clicked.connect(
+            partial(self._model.btn_operation_two_arg, "mod")
+        )
 
         # One arg operation buttons
-        self._view.btn_change_sign.clicked.connect(partial(self._model.btn_operation_one_arg, '+/-'))
-        self._view.btn_x_inv.clicked.connect(partial(self._model.btn_operation_one_arg, '1/x'))
-        self._view.btn_sqrt.clicked.connect(partial(self._model.btn_operation_one_arg, 'sqrt'))
-        self._view.btn_sin.clicked.connect(partial(self._model.btn_operation_one_arg, 'sin'))
-        self._view.btn_cos.clicked.connect(partial(self._model.btn_operation_one_arg, 'cos'))
-        self._view.btn_tan.clicked.connect(partial(self._model.btn_operation_one_arg, 'tan'))
-        self._view.btn_log.clicked.connect(partial(self._model.btn_operation_one_arg, 'log'))
-        self._view.btn_ln.clicked.connect(partial(self._model.btn_operation_one_arg, 'ln'))
+        self._view.btn_change_sign.clicked.connect(
+            partial(self._model.btn_operation_one_arg, "+/-")
+        )
+        self._view.btn_x_inv.clicked.connect(
+            partial(self._model.btn_operation_one_arg, "1/x")
+        )
+        self._view.btn_sqrt.clicked.connect(
+            partial(self._model.btn_operation_one_arg, "sqrt")
+        )
+        self._view.btn_sin.clicked.connect(
+            partial(self._model.btn_operation_one_arg, "sin")
+        )
+        self._view.btn_cos.clicked.connect(
+            partial(self._model.btn_operation_one_arg, "cos")
+        )
+        self._view.btn_tan.clicked.connect(
+            partial(self._model.btn_operation_one_arg, "tan")
+        )
+        self._view.btn_log.clicked.connect(
+            partial(self._model.btn_operation_one_arg, "log")
+        )
+        self._view.btn_ln.clicked.connect(
+            partial(self._model.btn_operation_one_arg, "ln")
+        )
 
 
 def main():
