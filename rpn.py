@@ -197,7 +197,7 @@ class PyRpnEvaluate:
             Insert a digit in the stack last entrie
 
         Args:
-            key (str): one of these caracters -> '0123456789,'
+            key (str): one of these caracters -> '0123456789,.'
         """
         if self._new_x:
             self._stack.push("")
@@ -543,10 +543,10 @@ class PyRpnEvaluate:
         self._view.x_display.setText("ERROR")
 
     def format_number(self, number):
+        if number == "0,0":
+            return number
         number = locale.atof(number)
-        print(f"Before: {number}")
         number = locale.format_string("%.12g", number, grouping=True)
-        print(f"After: {number}")
 
         return number
 
