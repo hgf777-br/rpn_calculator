@@ -13,6 +13,7 @@ import os
 import sys
 import locale
 import math
+import re
 from functools import partial
 
 import PyQt6.QtCore as qtc
@@ -543,11 +544,27 @@ class PyRpnEvaluate:
         self._view.x_display.setText("ERROR")
 
     def format_number(self, number):
-        if number == "0,0":
+        """Format a number string according to locale settings with proper grouping.
+        
+        This function takes a number string and formats it using locale-specific
+        formatting rules. It handles special cases like zero with decimal places
+        and applies grouping separators for better readability.
+        
+        Args:
+            number (str): A string representation of a number that may contain
+                        locale-specific decimal separators (like comma) and
+                        grouping separators (like dots).
+        
+        Returns:
+            str: A formatted number string with proper locale-specific grouping
+                and decimal formatting. Returns the original string unchanged
+                if it matches the pattern for zero with trailing decimal zeros.
+        """
+        if re.match(r"^-?0,0+$", number):
             return number
         number = locale.atof(number)
         number = locale.format_string("%.12g", number, grouping=True)
-
+    
         return number
 
 
