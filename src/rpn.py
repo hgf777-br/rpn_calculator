@@ -23,6 +23,8 @@ import PyQt6.QtWidgets as qtw
 from PyQt6 import uic
 
 PT_BR_LOCALES = ("pt-BR", "pt_BR.UTF-8", "pt_BR.utf8", "Portuguese_Brazil.1252")
+PT_BR_DECIMAL_SEPARATOR = ","
+PT_BR_THOUSANDS_SEPARATOR = "."
 
 
 def set_pt_br_locale() -> None:
@@ -262,7 +264,7 @@ class PyRpnEvaluate:
 
         formatted = self.format_integer_part(integer)
         if decimal:
-            formatted += locale.localeconv()["decimal_point"] + decimal
+            formatted += PT_BR_DECIMAL_SEPARATOR + decimal
 
         return (formatted, "x10", str(int(exponent)))
 
@@ -284,8 +286,8 @@ class PyRpnEvaluate:
         return text
 
     def format_integer_part(self, integer: str) -> str:
-        """Format the integer part of a number string according to locale settings."""
-        return locale.format_string("%d", int(integer), grouping=True)
+        """Format the integer part using Brazilian thousands separators."""
+        return f"{int(integer):,d}".replace(",", PT_BR_THOUSANDS_SEPARATOR)
 
     def format_number_for_display(
         self, number: Decimal | None, pending_point: bool = False
@@ -317,7 +319,7 @@ class PyRpnEvaluate:
         integer, _, decimal = text.lstrip("-").partition(".")
         formatted = sign + self.format_integer_part(integer)
         if decimal or pending_point:
-            formatted += locale.localeconv()["decimal_point"] + decimal
+            formatted += PT_BR_DECIMAL_SEPARATOR + decimal
 
         return (formatted, "", "")
 
