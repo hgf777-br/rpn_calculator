@@ -10,11 +10,11 @@ Maybe in the future I will enhance it. Or maybe someone else will...
 
 ## Install and Use
 
-1) If you only want to to use it in your windows (7+), just download the [rpn setup](win_installer/rpn_setup.exe) file inside the [win_installer](win_installer) folder and double click it.
+1) If you only want to to use it in your windows (10+), just download the [rpn setup](win_installer/rpn_setup.exe) file inside the [win_installer](win_installer) folder and double click it.
 
 2) if you want to run as a python project, and maybe work on it:
    1) First clone or download the code from this repository
-   2) Install Python 3.11 (I used 3.11.5) in your system. You can download the lastest version here [Python 3.11](https://www.python.org/ftp/python/3.11.5/python-3.11.5-amd64.exe)
+   2) Install Python 3.11 (I used 3.15) in your system. You can download the lastest version here [Python](https://www.python.org/downloads/)
    3) Install pipenv globally in the windows system. You can do this by typing the code bellow in a Powershell(or CMD) terminal: <strong>pip install pipenv</strong>
    4) With the same terminal go to the folder were you put the repository code and run the code bellow to create the virtual enviroment to run the code: <strong> pipenv install</strong>
       This will install all dependencies needed by the project.

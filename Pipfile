@@ -12,6 +12,7 @@ pytest = "*"
 flake8 = "*"
 pytest-cov = "*"
 pytest-qt = "*"
+pyrefly = "*"
 
 [requires]
-python_version = "3.11"
+python_version = "3.15"
