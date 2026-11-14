@@ -18,17 +18,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Install Linux libraries
+    - name: Install Linux libraries and pt-BR locale
       run: |
-        sudo apt-get install -y libegl1
-        export LC_ALL="pt_BR.UTF-8"
-        export LC_CTYPE="pt_BR.UTF-8"
-        sudo dpkg-reconfigure locales  
-    - uses: actions/checkout@v3
-    - name: Set up Python 3.11
-      uses: actions/setup-python@v3
+        sudo apt-get update
+        sudo apt-get install -y libegl1 libgl1 libxkbcommon0 libfontconfig1 locales
+        sudo locale-gen pt_BR.UTF-8
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.15
+      uses: actions/setup-python@v5
       with:
-        python-version: "3.11"
+        python-version: "3.15"
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -41,5 +40,7 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         pipenv run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
+      env:
+        QT_QPA_PLATFORM: offscreen
       run: |
-        # pipenv run pytest
+        pipenv run pytest
